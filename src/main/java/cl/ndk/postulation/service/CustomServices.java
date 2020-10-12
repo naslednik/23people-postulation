@@ -7,6 +7,6 @@ public interface CustomServices<T> {
 	public ResponseEntity<?> findAll(Pageable pageable);
 	public ResponseEntity<?> findAll();
 	public ResponseEntity<?> findById(Integer id);
-	public ResponseEntity<?> save(T obj);
+	public ResponseEntity<?> save(T obj, String ContentType);
 	public ResponseEntity<?> delete(Integer id);
 }

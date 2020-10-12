@@ -10,30 +10,30 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import cl.ndk.postulation.models.Course;
-import cl.ndk.postulation.repository.CourseRepo;
+import cl.ndk.postulation.models.Student;
+import cl.ndk.postulation.repository.StudentRepo;
 
 @Service
-public class CourseServiceImpl implements CustomServices<Course> {
+public class StudentServiceImpl implements CustomServices<Student> {
 	@Autowired
-	CourseRepo repo;
+	StudentRepo repo;
 
 	@Override
 	public ResponseEntity<?> findAll(Pageable pageable) {
-		Page<Course> pagination = repo.findAll(pageable);
+		Page<Student> pagination = repo.findAll(pageable);
 		
 		return ResponseEntity.ok(pagination);
 	}
 
 	@Override
 	public ResponseEntity<?> findAll() {
-		Iterable<Course>itr = repo.findAll();
+		Iterable<Student>itr = repo.findAll();
 		return ResponseEntity.ok(IteratorUtils.toList(itr.iterator()));
 	}
 
 	@Override
 	public ResponseEntity<?> findById(Integer id) {
-		Optional<Course> opt = repo.findById(id);
+		Optional<Student> opt = repo.findById(id);
 		if (!opt.isPresent()) {
 			return ResponseEntity.notFound().build();
 		}
@@ -41,20 +41,21 @@ public class CourseServiceImpl implements CustomServices<Course> {
 	}
 
 	@Override
-	public ResponseEntity<?> save(Course course, String contentType) {
+	public ResponseEntity<?> save(Student student, String contentType) {
+		//Header attribute content-type is not application/json
 		if (!contentType.equals("application/json")) {
 			return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).build();			
 		}
-		if (course.getCode().length()!=4) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-		}
-		repo.save(course);
-		return ResponseEntity.status(HttpStatus.CREATED).build();
+		
+		//
+		// TODO validate rut and age.
+		//
+		return ResponseEntity.status(HttpStatus.CREATED).body(repo.save(student));
 	}
 
 	@Override
 	public ResponseEntity<?> delete(Integer id) {
-		Optional<Course> opt = repo.findById(id);
+		Optional<Student> opt = repo.findById(id);
 		if (!opt.isPresent()) {
 			return ResponseEntity.notFound().build();
 		}
