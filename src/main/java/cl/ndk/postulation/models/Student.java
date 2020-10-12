@@ -1,26 +1,28 @@
 package cl.ndk.postulation.models;
 
-import java.io.Serializable;
-
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+import com.fasterxml.jackson.annotation.JsonSetter;
 
 
 @Entity
-public class Student implements Serializable {
-	/****/	private static final long serialVersionUID = 1L;
-	
+public class Student {
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "student_id")
 	private int id;
 	private String rut;//validate rut during data gathering.
 	private String name;
 	private String lastName;
 	private int age; // validate age > 18
-	@OneToMany
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "course_id")
 	private Course course;
 
 	public Student() {} //empty constructor for JPA
@@ -70,7 +72,8 @@ public class Student implements Serializable {
 	public Course getCourse() {
 		return course;
 	}
-
+	
+	@JsonSetter("course")
 	public void setCourse(Course course) {
 		this.course = course;
 	}
