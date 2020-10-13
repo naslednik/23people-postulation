@@ -3,6 +3,7 @@ package cl.ndk.postulation.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,8 +22,7 @@ public class StudentController {
 	StudentServiceImpl studentService;
 	
 	@RequestMapping(method = RequestMethod.GET, path = "GET/students")
-	public ResponseEntity<?> getPaginatedCourses(){
-		Pageable pageable = Pageable.unpaged();
+	public ResponseEntity<?> getPaginatedCourses(@PageableDefault(size = 10, page = 0)Pageable pageable){
 		return studentService.findAll(pageable);
 	}
 	
