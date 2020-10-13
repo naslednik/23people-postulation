@@ -1,6 +1,7 @@
 package cl.ndk.postulation.service;
 
 import java.util.Optional;
+import java.util.StringTokenizer;
 
 import org.apache.commons.collections4.IteratorUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +51,13 @@ public class StudentServiceImpl implements CustomServices<Student> {
 		//
 		// TODO validate rut and age.
 		//
+		if (!rutValidation(student.getRut())) {//valid ruts are 12345678-9, 12.345.678-9
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+		}
+		if (student.getAge()<=18) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+		}
+		
 		return ResponseEntity.status(HttpStatus.CREATED).body(repo.save(student));
 	}
 
@@ -59,8 +67,50 @@ public class StudentServiceImpl implements CustomServices<Student> {
 		if (!opt.isPresent()) {
 			return ResponseEntity.notFound().build();
 		}
+		try {
+			repo.deleteById(id);			
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(e.getMessage());
+		}
 		return ResponseEntity.ok().build();
 	}
 
+	
+	private boolean rutValidation(String rut) {
+		if (!rut.matches("^(\\d{1,2}(((?:\\.\\d{1,3}){2})|(\\d{6}))-[\\dkK])$")) {
+			return false;
+		}
+		StringTokenizer tokenizer = new StringTokenizer(rut, "-");
+
+		String numbers = tokenizer.nextToken();
+		char rutDigit = tokenizer.nextToken().charAt(0);
+		
+		if (numbers.contains(".")) {
+			tokenizer = new StringTokenizer(numbers, ".");
+			String aux = "";
+			while (tokenizer.hasMoreElements()) {
+				aux += tokenizer.nextToken();
+			}
+			numbers = aux;
+		}
+		
+		int sum = 0;
+		for (int i = numbers.length()-1; i >= 0; i--) {
+			sum += Integer.valueOf(String.valueOf(numbers.charAt(i)))*((numbers.length()-(i+1))%6+2);
+		}
+		
+		char finalChar = 0;
+		int digitValue = 11-(sum%11);
+		
+		if (digitValue == 10) {
+			finalChar = 'k';
+		}else if(digitValue == 11){
+			finalChar = 0;
+		}else {
+			finalChar = Character.forDigit(digitValue, 10);
+		}
+		
+		return rutDigit == finalChar;
+	}
 	
 }

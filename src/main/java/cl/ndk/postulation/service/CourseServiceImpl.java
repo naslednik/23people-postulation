@@ -45,7 +45,7 @@ public class CourseServiceImpl implements CustomServices<Course> {
 		if (!contentType.equals("application/json")) {
 			return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE).build();			
 		}
-		if (course.getCode().length()!=4) {
+		if (course.getCode().length()>4) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 		}
 		repo.save(course);
@@ -57,6 +57,11 @@ public class CourseServiceImpl implements CustomServices<Course> {
 		Optional<Course> opt = repo.findById(id);
 		if (!opt.isPresent()) {
 			return ResponseEntity.notFound().build();
+		}
+		try {
+			repo.deleteById(id);			
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.METHOD_NOT_ALLOWED).body(e.getMessage());
 		}
 		return ResponseEntity.ok().build();
 	}

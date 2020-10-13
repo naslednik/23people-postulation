@@ -1,5 +1,6 @@
 package cl.ndk.postulation.controllers;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +36,7 @@ public class CourseController {
 	}
 	
 	@RequestMapping(method = RequestMethod.POST, path = "POST/courses")
-	public ResponseEntity<?> createCourse(@va@RequestBody Course course, @RequestHeader("Content-Type") String contentType){
+	public ResponseEntity<?> createCourse(@RequestBody Course course, @RequestHeader("Content-Type") String contentType){
 		return courseService.save(course, contentType);
 	}
 	
